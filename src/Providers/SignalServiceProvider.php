@@ -1,4 +1,8 @@
 <?php
+/**
+ * SignalServiceProvider.php
+ * Created by @anonymoussc on 6/5/2017 6:30 AM.
+ */
 
 namespace App\Components\Signal\Providers;
 
@@ -25,7 +29,7 @@ class SignalServiceProvider extends ServiceProvider
         $this->registerConfig();
         $this->registerViews();
 
-        $this->loadMigrationsFrom(__DIR__.'/../../Database/Migrations');
+        $this->loadMigrationsFrom(__DIR__ . '/../../Database/Migrations');
 
         $dispatcher = $this->app->make('events');
         $dispatcher->subscribe('App\Components\Signal\Listeners\SignalEventListener');
@@ -53,10 +57,10 @@ class SignalServiceProvider extends ServiceProvider
     protected function registerConfig()
     {
         $this->publishes([
-            __DIR__.'/../../Config/config.php' => config_path('signal.php'),
-        ],'config-signal');
+            __DIR__ . '/../../Config/config.php' => config_path('signal.php'),
+        ], 'config-signal');
         $this->mergeConfigFrom(
-            __DIR__.'/../../Config/config.php', 'signal'
+            __DIR__ . '/../../Config/config.php', 'signal'
         );
     }
 
@@ -69,10 +73,10 @@ class SignalServiceProvider extends ServiceProvider
     {
         $viewPath = base_path('resources/views/components/signal');
 
-        $sourcePath = __DIR__.'/../../Resources/views';
+        $sourcePath = __DIR__ . '/../../Resources/views';
 
         $this->publishes([
-            $sourcePath => $viewPath
+            $sourcePath => $viewPath,
         ]);
 
         $this->loadViewsFrom(array_merge(array_map(function ($path) {
@@ -92,7 +96,7 @@ class SignalServiceProvider extends ServiceProvider
         if (is_dir($langPath)) {
             $this->loadTranslationsFrom($langPath, 'signal');
         } else {
-            $this->loadTranslationsFrom(__DIR__ .'/../../Resources/lang', 'signal');
+            $this->loadTranslationsFrom(__DIR__ . '/../../Resources/lang', 'signal');
         }
     }
 
