@@ -1,4 +1,8 @@
 <?php
+/**
+ * SignalController.php
+ * Created by @anonymoussc on 6/5/2017 6:31 AM.
+ */
 
 namespace App\Components\Signal\Http\Controllers;
 
@@ -28,7 +32,9 @@ class SignalController extends Controller
 
     /**
      * Store a newly created resource in storage.
+     *
      * @param  Request $request
+     *
      * @return Response
      */
     public function store(Request $request)
@@ -46,7 +52,9 @@ class SignalController extends Controller
 
     /**
      * Update the specified resource in storage.
+     *
      * @param  Request $request
+     *
      * @return Response
      */
     public function update(Request $request)
