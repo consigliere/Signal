@@ -1,7 +1,7 @@
 <?php
 
 return [
-    'name' => 'Signal',
+    'name'        => 'Signal',
 
     // Enable logging activity
     'logActivity' => env('LOG_ACTIVITY', true),
