@@ -17,10 +17,10 @@ composer require consigliere/signal
 
 ```php
 'providers' => [
-        // ...
-        App\Components\Signal\Providers\SignalServiceProvider::class,
-        // ...
-    ],
+    // ...
+    App\Components\Signal\Providers\SignalServiceProvider::class,
+    // ...
+],
 ```
 
 ## Migration
@@ -94,40 +94,7 @@ if ((config('signal.logActivity')) && (config('signal.alert'))) {
 }
 ```
 
-### Critical
-```php
-if ((config('signal.logActivity')) && (config('signal.critical'))) {
-    \Event::fire('event.critical', [['message' => $message]]);
-}
-```
-
-### Error
-```php
-if ((config('signal.logActivity')) && (config('signal.error'))) {
-    \Event::fire('event.error', [['message' => $param['e']->getMessage()]]);
-}
-```
-
-### Warning
-```php
-if ((config('signal.logActivity')) && (config('signal.warning'))) {
-    \Event::fire('event.warning', [['message' => $message]]);
-}
-```
-
-### Notice
-```php
-if ((config('signal.logActivity')) && (config('signal.notice'))) {
-    \Event::fire('event.notice', [['message' => $message]]);
-}
-```
-
-### Info
-```php
-if ((config('signal.logActivity')) && (config('signal.info'))) {
-    \Event::fire('event.info', [['message' => $message]]);
-}
-```
+...
 
 ### Debug
 ```php
