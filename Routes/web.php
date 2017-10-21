@@ -5,5 +5,5 @@
  */
 
 Route::group(['middleware' => 'web', 'prefix' => 'signal', 'namespace' => 'App\\Components\Signal\Http\Controllers'], function () {
-    Route::get('/', 'SignalController@index');
+    // Route::get('/', 'SignalController@index');
 });
