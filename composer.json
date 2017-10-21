@@ -16,5 +16,12 @@
     "illuminate/support"  : "5.5.*",
     "illuminate/contracts": "5.5.*",
     "jenssegers/agent"    : "^2.4"
+  },
+  "extra"      : {
+    "laravel": {
+      "providers": [
+        "App\\Components\\Signal\\Providers\\SignalServiceProvider"
+      ]
+    }
   }
 }
