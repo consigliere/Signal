@@ -28,8 +28,9 @@ class SignalServiceProvider extends ServiceProvider
         $this->registerTranslations();
         $this->registerConfig();
         $this->registerViews();
+        $this->registerMigration();
 
-        $this->loadMigrationsFrom(__DIR__ . '/../../Database/Migrations');
+        // $this->loadMigrationsFrom(__DIR__ . '/../../Database/Migrations');
 
         $dispatcher = $this->app->make('events');
         $dispatcher->subscribe('App\Components\Signal\Listeners\SignalEventListener');
@@ -98,6 +99,17 @@ class SignalServiceProvider extends ServiceProvider
         } else {
             $this->loadTranslationsFrom(__DIR__ . '/../../Resources/lang', 'signal');
         }
+    }
+
+    /**
+     * Register migrations.
+     *
+     * @return void
+     */
+    public function registerMigration(){
+        $this->publishes([
+            __DIR__.'/../../Database/Migrations/' => database_path('migrations')
+        ], 'migrations-signal');
     }
 
     /**
