@@ -33,7 +33,7 @@ class SignalServiceProvider extends ServiceProvider
         // $this->loadMigrationsFrom(__DIR__ . '/../../Database/Migrations');
 
         $dispatcher = $this->app->make('events');
-        $dispatcher->subscribe('App\Components\Signal\Listeners\SignalEventListener');
+        $dispatcher->subscribe('App\Components\Signal\Listeners\SignalEventSubcriber');
     }
 
     /**
