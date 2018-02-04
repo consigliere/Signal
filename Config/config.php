@@ -15,4 +15,9 @@ return [
     'notice'      => false,
     'info'        => false,
     'debug'       => false,
+
+    'email' => [
+        'sent'   => env('SIGNAL_EMAIL_SENT', false),
+        'sentTo' => env('SIGNAL_EMAIL_SENT_TO'),
+    ],
 ];
