@@ -6,15 +6,19 @@
 
 namespace App\Components\Signal\Listeners;
 
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Log;
 use App\Components\Signal\Models\Signal;
 use Jenssegers\Agent\Agent;
-use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
+use App\Components\Signal\Emails\SignalMailer;
+use Onsigbaar\Foundation\Base\Traits\ErrorLog;
 
 class SignalEventSubcriber
 {
+    use ErrorLog;
+
     private $agent;
 
     public function __construct()
@@ -43,47 +47,7 @@ class SignalEventSubcriber
      *
      * @return bool
      */
-    public function onEmergency(array $log, $level = 'emergency')
-    {
-        $request       = (isset($log['request'])) ? $log['request'] : app('request');
-        $userId        = (null !== Auth::id()) ? Auth::id() : 0;
-        $agentLanguage = $this->toString($this->agent->languages());
-
-        $logData = [
-            'level'                   => $level,
-            'message'                 => $log['message'],
-            'request_full_url'        => $request->fullUrl() ? $request->fullUrl() : 'undefined',
-            'request_url'             => $request->url() ? $request->url() : 'undefined',
-            'request_uri'             => $request->path() ? $request->path() : 'undefined',
-            'request_method'          => app('request')->header('x-http-method-override') ? app('request')->header('x-http-method-override') : $request->method(),
-            'devices'                 => $this->agent->device(),
-            'os'                      => $this->agent->platform(),
-            'os_version'              => $this->agent->version($this->agent->platform()),
-            'browser_name'            => $this->agent->browser(),
-            'browser_version'         => $this->agent->version($this->agent->browser()),
-            'browser_accept_language' => $this->agent->languages(),
-            'robot'                   => $this->agent->robot(),
-            'client_ip'               => $request->ip(),
-            'user_id'                 => $userId,
-            'created_at'              => Carbon::now(),
-        ];
-
-        try {
-            $records = Signal::insert($logData);
-        } catch (\Exception $e) {
-            Log::error($e->getMessage());
-        }
-
-        return true;
-    }
-
-    /**
-     * @param array  $log
-     * @param string $level
-     *
-     * @return bool
-     */
-    public function onAlert(array $log, $level = 'alert')
+    public function onEmergency(array $log, $level = 'emergency', array $param = [])
     {
         $request       = (isset($log['request'])) ? $log['request'] : app('request');
         $userId        = (null !== Auth::id()) ? Auth::id() : 0;
@@ -110,8 +74,18 @@ class SignalEventSubcriber
 
         try {
             $records = Signal::insert($logData);
-        } catch (\Exception $e) {
-            Log::error($e->getMessage());
+
+            if (config('signal.email.sent')) {
+                try {
+                    Mail::to(config('signal.email.sentTo'))->send(new SignalMailer($logData));
+                }
+                catch (\Exception $e) {
+                    self::errorLog($e);
+                }
+            }
+        }
+        catch (\Exception $e) {
+            self::errorLog($e);
         }
 
         return true;
@@ -123,7 +97,7 @@ class SignalEventSubcriber
      *
      * @return bool
      */
-    public function onCritical(array $log, $level = 'critical')
+    public function onAlert(array $log, $level = 'alert', array $param = [])
     {
         $request       = (isset($log['request'])) ? $log['request'] : app('request');
         $userId        = (null !== Auth::id()) ? Auth::id() : 0;
@@ -150,8 +124,18 @@ class SignalEventSubcriber
 
         try {
             $records = Signal::insert($logData);
-        } catch (\Exception $e) {
-            Log::error($e->getMessage());
+
+            if (config('signal.email.sent')) {
+                try {
+                    Mail::to(config('signal.email.sentTo'))->send(new SignalMailer($logData));
+                }
+                catch (\Exception $e) {
+                    self::errorLog($e);
+                }
+            }
+        }
+        catch (\Exception $e) {
+            self::errorLog($e);
         }
 
         return true;
@@ -163,7 +147,7 @@ class SignalEventSubcriber
      *
      * @return bool
      */
-    public function onError(array $log, $level = 'error')
+    public function onCritical(array $log, $level = 'critical', array $param = [])
     {
         $request       = (isset($log['request'])) ? $log['request'] : app('request');
         $userId        = (null !== Auth::id()) ? Auth::id() : 0;
@@ -190,8 +174,18 @@ class SignalEventSubcriber
 
         try {
             $records = Signal::insert($logData);
-        } catch (\Exception $e) {
-            Log::error($e->getMessage());
+
+            if (config('signal.email.sent')) {
+                try {
+                    Mail::to(config('signal.email.sentTo'))->send(new SignalMailer($logData));
+                }
+                catch (\Exception $e) {
+                    self::errorLog($e);
+                }
+            }
+        }
+        catch (\Exception $e) {
+            self::errorLog($e);
         }
 
         return true;
@@ -203,7 +197,7 @@ class SignalEventSubcriber
      *
      * @return bool
      */
-    public function onWarning(array $log, $level = 'warning')
+    public function onError(array $log, $level = 'error', array $param = [])
     {
         $request       = (isset($log['request'])) ? $log['request'] : app('request');
         $userId        = (null !== Auth::id()) ? Auth::id() : 0;
@@ -230,8 +224,18 @@ class SignalEventSubcriber
 
         try {
             $records = Signal::insert($logData);
-        } catch (\Exception $e) {
-            Log::error($e->getMessage());
+
+            if (config('signal.email.sent')) {
+                try {
+                    Mail::to(config('signal.email.sentTo'))->send(new SignalMailer($logData));
+                }
+                catch (\Exception $e) {
+                    self::errorLog($e);
+                }
+            }
+        }
+        catch (\Exception $e) {
+            self::errorLog($e);
         }
 
         return true;
@@ -243,7 +247,7 @@ class SignalEventSubcriber
      *
      * @return bool
      */
-    public function onNotice(array $log, $level = 'notice')
+    public function onWarning(array $log, $level = 'warning', array $param = [])
     {
         $request       = (isset($log['request'])) ? $log['request'] : app('request');
         $userId        = (null !== Auth::id()) ? Auth::id() : 0;
@@ -270,8 +274,18 @@ class SignalEventSubcriber
 
         try {
             $records = Signal::insert($logData);
-        } catch (\Exception $e) {
-            Log::error($e->getMessage());
+
+            if (config('signal.email.sent')) {
+                try {
+                    Mail::to(config('signal.email.sentTo'))->send(new SignalMailer($logData));
+                }
+                catch (\Exception $e) {
+                    self::errorLog($e);
+                }
+            }
+        }
+        catch (\Exception $e) {
+            self::errorLog($e);
         }
 
         return true;
@@ -283,7 +297,7 @@ class SignalEventSubcriber
      *
      * @return bool
      */
-    public function onInfo(array $log, $level = 'info')
+    public function onNotice(array $log, $level = 'notice', array $param = [])
     {
         $request       = (isset($log['request'])) ? $log['request'] : app('request');
         $userId        = (null !== Auth::id()) ? Auth::id() : 0;
@@ -310,12 +324,21 @@ class SignalEventSubcriber
 
         try {
             $records = Signal::insert($logData);
-        } catch (\Exception $e) {
-            Log::error($e->getMessage());
+
+            if (config('signal.email.sent')) {
+                try {
+                    Mail::to(config('signal.email.sentTo'))->send(new SignalMailer($logData));
+                }
+                catch (\Exception $e) {
+                    self::errorLog($e);
+                }
+            }
+        }
+        catch (\Exception $e) {
+            self::errorLog($e);
         }
 
         return true;
-
     }
 
     /**
@@ -324,7 +347,7 @@ class SignalEventSubcriber
      *
      * @return bool
      */
-    public function onDebug(array $log, $level = 'debug')
+    public function onInfo(array $log, $level = 'info', array $param = [])
     {
         $request       = (isset($log['request'])) ? $log['request'] : app('request');
         $userId        = (null !== Auth::id()) ? Auth::id() : 0;
@@ -351,8 +374,68 @@ class SignalEventSubcriber
 
         try {
             $records = Signal::insert($logData);
-        } catch (\Exception $e) {
-            Log::error($e->getMessage());
+
+            if (config('signal.email.sent')) {
+                try {
+                    Mail::to(config('signal.email.sentTo'))->send(new SignalMailer($logData));
+                }
+                catch (\Exception $e) {
+                    self::errorLog($e);
+                }
+            }
+        }
+        catch (\Exception $e) {
+            self::errorLog($e);
+        }
+
+        return true;
+    }
+
+    /**
+     * @param array  $log
+     * @param string $level
+     *
+     * @return bool
+     */
+    public function onDebug(array $log, $level = 'debug', array $param = [])
+    {
+        $request       = (isset($log['request'])) ? $log['request'] : app('request');
+        $userId        = (null !== Auth::id()) ? Auth::id() : 0;
+        $agentLanguage = $this->toString($this->agent->languages());
+
+        $logData = [
+            'level'                   => $level,
+            'message'                 => $log['message'],
+            'request_full_url'        => $request->fullUrl() ? $request->fullUrl() : 'undefined',
+            'request_url'             => $request->url() ? $request->url() : 'undefined',
+            'request_uri'             => $request->path() ? $request->path() : 'undefined',
+            'request_method'          => app('request')->header('x-http-method-override') ? app('request')->header('x-http-method-override') : $request->method(),
+            'devices'                 => $this->agent->device(),
+            'os'                      => $this->agent->platform(),
+            'os_version'              => $this->agent->version($this->agent->platform()),
+            'browser_name'            => $this->agent->browser(),
+            'browser_version'         => $this->agent->version($this->agent->browser()),
+            'browser_accept_language' => $agentLanguage,
+            'robot'                   => $this->agent->robot(),
+            'client_ip'               => $request->ip(),
+            'user_id'                 => $userId,
+            'created_at'              => Carbon::now(),
+        ];
+
+        try {
+            $records = Signal::insert($logData);
+
+            if (config('signal.email.sent')) {
+                try {
+                    Mail::to(config('signal.email.sentTo'))->send(new SignalMailer($logData));
+                }
+                catch (\Exception $e) {
+                    self::errorLog($e);
+                }
+            }
+        }
+        catch (\Exception $e) {
+            self::errorLog($e);
         }
 
         return true;
@@ -369,7 +452,7 @@ class SignalEventSubcriber
     private function sendTo($email, $subject, $view, $data = [])
     {
         $sender = $this->gatherSenderAddress();
-        Mail::queue($view, $data, function ($message) use ($email, $subject, $sender) {
+        Mail::queue($view, $data, function($message) use ($email, $subject, $sender) {
             $message->to($email)
                 ->from($sender['address'], $sender['name'])
                 ->subject($subject);
