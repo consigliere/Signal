@@ -12,5 +12,9 @@ use Illuminate\Routing\Controller;
 
 class SignalController extends Controller
 {
+    public function index() {
+        \Event::fire('event.emergency', [['message' => 'test']]);
+        return view('signal::index');
+    }
 
 }
