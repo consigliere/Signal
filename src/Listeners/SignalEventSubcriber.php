@@ -14,10 +14,17 @@ use Carbon\Carbon;
 use App\Components\Signal\Emails\SignalMailer;
 use Onsigbaar\Foundation\Base\Traits\ErrorLog;
 
+/**
+ * Class SignalEventSubcriber
+ * @package App\Components\Signal\Listeners
+ */
 class SignalEventSubcriber
 {
     use ErrorLog;
 
+    /**
+     * @var \Jenssegers\Agent\Agent
+     */
     private $agent;
 
     public function __construct()
