@@ -8,7 +8,6 @@ namespace App\Components\Signal\Listeners;
 
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
-use Illuminate\Support\Facades\Log;
 use App\Components\Signal\Models\Signal;
 use Jenssegers\Agent\Agent;
 use Carbon\Carbon;
@@ -49,39 +48,11 @@ class SignalEventSubcriber
      */
     public function onEmergency(array $log, $level = 'emergency', array $param = [])
     {
-        $request       = (isset($log['request'])) ? $log['request'] : app('request');
-        $userId        = (null !== Auth::id()) ? Auth::id() : 0;
-        $agentLanguage = $this->toString($this->agent->languages());
-
-        $logData = [
-            'level'                   => $level,
-            'message'                 => $log['message'],
-            'request_full_url'        => $request->fullUrl() ? $request->fullUrl() : 'undefined',
-            'request_url'             => $request->url() ? $request->url() : 'undefined',
-            'request_uri'             => $request->path() ? $request->path() : 'undefined',
-            'request_method'          => app('request')->header('x-http-method-override') ? app('request')->header('x-http-method-override') : $request->method(),
-            'devices'                 => $this->agent->device(),
-            'os'                      => $this->agent->platform(),
-            'os_version'              => $this->agent->version($this->agent->platform()),
-            'browser_name'            => $this->agent->browser(),
-            'browser_version'         => $this->agent->version($this->agent->browser()),
-            'browser_accept_language' => $agentLanguage,
-            'robot'                   => $this->agent->robot(),
-            'client_ip'               => $request->ip(),
-            'user_id'                 => $userId,
-            'created_at'              => Carbon::now(),
-        ];
-
         try {
-            $records = Signal::insert($logData);
+            $logData = self::getLogData($log, $level);
 
-            if (config('signal.email.sent')) {
-                try {
-                    Mail::to(config('signal.email.sentTo'))->send(new SignalMailer($logData));
-                }
-                catch (\Exception $e) {
-                    self::errorLog($e);
-                }
+            if (Signal::insert($logData)) {
+                self::sendMail($logData);
             }
         }
         catch (\Exception $e) {
@@ -99,39 +70,11 @@ class SignalEventSubcriber
      */
     public function onAlert(array $log, $level = 'alert', array $param = [])
     {
-        $request       = (isset($log['request'])) ? $log['request'] : app('request');
-        $userId        = (null !== Auth::id()) ? Auth::id() : 0;
-        $agentLanguage = $this->toString($this->agent->languages());
-
-        $logData = [
-            'level'                   => $level,
-            'message'                 => $log['message'],
-            'request_full_url'        => $request->fullUrl() ? $request->fullUrl() : 'undefined',
-            'request_url'             => $request->url() ? $request->url() : 'undefined',
-            'request_uri'             => $request->path() ? $request->path() : 'undefined',
-            'request_method'          => app('request')->header('x-http-method-override') ? app('request')->header('x-http-method-override') : $request->method(),
-            'devices'                 => $this->agent->device(),
-            'os'                      => $this->agent->platform(),
-            'os_version'              => $this->agent->version($this->agent->platform()),
-            'browser_name'            => $this->agent->browser(),
-            'browser_version'         => $this->agent->version($this->agent->browser()),
-            'browser_accept_language' => $agentLanguage,
-            'robot'                   => $this->agent->robot(),
-            'client_ip'               => $request->ip(),
-            'user_id'                 => $userId,
-            'created_at'              => Carbon::now(),
-        ];
-
         try {
-            $records = Signal::insert($logData);
+            $logData = self::getLogData($log, $level);
 
-            if (config('signal.email.sent')) {
-                try {
-                    Mail::to(config('signal.email.sentTo'))->send(new SignalMailer($logData));
-                }
-                catch (\Exception $e) {
-                    self::errorLog($e);
-                }
+            if (Signal::insert($logData)) {
+                self::sendMail($logData);
             }
         }
         catch (\Exception $e) {
@@ -149,39 +92,11 @@ class SignalEventSubcriber
      */
     public function onCritical(array $log, $level = 'critical', array $param = [])
     {
-        $request       = (isset($log['request'])) ? $log['request'] : app('request');
-        $userId        = (null !== Auth::id()) ? Auth::id() : 0;
-        $agentLanguage = $this->toString($this->agent->languages());
-
-        $logData = [
-            'level'                   => $level,
-            'message'                 => $log['message'],
-            'request_full_url'        => $request->fullUrl() ? $request->fullUrl() : 'undefined',
-            'request_url'             => $request->url() ? $request->url() : 'undefined',
-            'request_uri'             => $request->path() ? $request->path() : 'undefined',
-            'request_method'          => app('request')->header('x-http-method-override') ? app('request')->header('x-http-method-override') : $request->method(),
-            'devices'                 => $this->agent->device(),
-            'os'                      => $this->agent->platform(),
-            'os_version'              => $this->agent->version($this->agent->platform()),
-            'browser_name'            => $this->agent->browser(),
-            'browser_version'         => $this->agent->version($this->agent->browser()),
-            'browser_accept_language' => $agentLanguage,
-            'robot'                   => $this->agent->robot(),
-            'client_ip'               => $request->ip(),
-            'user_id'                 => $userId,
-            'created_at'              => Carbon::now(),
-        ];
-
         try {
-            $records = Signal::insert($logData);
+            $logData = self::getLogData($log, $level);
 
-            if (config('signal.email.sent')) {
-                try {
-                    Mail::to(config('signal.email.sentTo'))->send(new SignalMailer($logData));
-                }
-                catch (\Exception $e) {
-                    self::errorLog($e);
-                }
+            if (Signal::insert($logData)) {
+                self::sendMail($logData);
             }
         }
         catch (\Exception $e) {
@@ -199,39 +114,20 @@ class SignalEventSubcriber
      */
     public function onError(array $log, $level = 'error', array $param = [])
     {
-        $request       = (isset($log['request'])) ? $log['request'] : app('request');
-        $userId        = (null !== Auth::id()) ? Auth::id() : 0;
-        $agentLanguage = $this->toString($this->agent->languages());
-
-        $logData = [
-            'level'                   => $level,
-            'message'                 => $log['message'],
-            'request_full_url'        => $request->fullUrl() ? $request->fullUrl() : 'undefined',
-            'request_url'             => $request->url() ? $request->url() : 'undefined',
-            'request_uri'             => $request->path() ? $request->path() : 'undefined',
-            'request_method'          => app('request')->header('x-http-method-override') ? app('request')->header('x-http-method-override') : $request->method(),
-            'devices'                 => $this->agent->device(),
-            'os'                      => $this->agent->platform(),
-            'os_version'              => $this->agent->version($this->agent->platform()),
-            'browser_name'            => $this->agent->browser(),
-            'browser_version'         => $this->agent->version($this->agent->browser()),
-            'browser_accept_language' => $agentLanguage,
-            'robot'                   => $this->agent->robot(),
-            'client_ip'               => $request->ip(),
-            'user_id'                 => $userId,
-            'created_at'              => Carbon::now(),
-        ];
-
         try {
-            $records = Signal::insert($logData);
+            $logData = self::getLogData($log, $level);
 
-            if (config('signal.email.sent')) {
-                try {
-                    Mail::to(config('signal.email.sentTo'))->send(new SignalMailer($logData));
+            if (Signal::insert($logData)) {
+                if (isset($log['error'])) {
+                    $logData['errorLog']         = true;
+                    $logData['getMessage']       = $log['error']->getMessage();
+                    $logData['getCode']          = $log['error']->getCode();
+                    $logData['getFile']          = $log['error']->getFile();
+                    $logData['getLine']          = $log['error']->getLine();
+                    $logData['getTraceAsString'] = $log['error']->getTraceAsString();
                 }
-                catch (\Exception $e) {
-                    self::errorLog($e);
-                }
+
+                self::sendMail($logData);
             }
         }
         catch (\Exception $e) {
@@ -249,39 +145,11 @@ class SignalEventSubcriber
      */
     public function onWarning(array $log, $level = 'warning', array $param = [])
     {
-        $request       = (isset($log['request'])) ? $log['request'] : app('request');
-        $userId        = (null !== Auth::id()) ? Auth::id() : 0;
-        $agentLanguage = $this->toString($this->agent->languages());
-
-        $logData = [
-            'level'                   => $level,
-            'message'                 => $log['message'],
-            'request_full_url'        => $request->fullUrl() ? $request->fullUrl() : 'undefined',
-            'request_url'             => $request->url() ? $request->url() : 'undefined',
-            'request_uri'             => $request->path() ? $request->path() : 'undefined',
-            'request_method'          => app('request')->header('x-http-method-override') ? app('request')->header('x-http-method-override') : $request->method(),
-            'devices'                 => $this->agent->device(),
-            'os'                      => $this->agent->platform(),
-            'os_version'              => $this->agent->version($this->agent->platform()),
-            'browser_name'            => $this->agent->browser(),
-            'browser_version'         => $this->agent->version($this->agent->browser()),
-            'browser_accept_language' => $agentLanguage,
-            'robot'                   => $this->agent->robot(),
-            'client_ip'               => $request->ip(),
-            'user_id'                 => $userId,
-            'created_at'              => Carbon::now(),
-        ];
-
         try {
-            $records = Signal::insert($logData);
+            $logData = self::getLogData($log, $level);
 
-            if (config('signal.email.sent')) {
-                try {
-                    Mail::to(config('signal.email.sentTo'))->send(new SignalMailer($logData));
-                }
-                catch (\Exception $e) {
-                    self::errorLog($e);
-                }
+            if (Signal::insert($logData)) {
+                self::sendMail($logData);
             }
         }
         catch (\Exception $e) {
@@ -299,39 +167,11 @@ class SignalEventSubcriber
      */
     public function onNotice(array $log, $level = 'notice', array $param = [])
     {
-        $request       = (isset($log['request'])) ? $log['request'] : app('request');
-        $userId        = (null !== Auth::id()) ? Auth::id() : 0;
-        $agentLanguage = $this->toString($this->agent->languages());
-
-        $logData = [
-            'level'                   => $level,
-            'message'                 => $log['message'],
-            'request_full_url'        => $request->fullUrl() ? $request->fullUrl() : 'undefined',
-            'request_url'             => $request->url() ? $request->url() : 'undefined',
-            'request_uri'             => $request->path() ? $request->path() : 'undefined',
-            'request_method'          => app('request')->header('x-http-method-override') ? app('request')->header('x-http-method-override') : $request->method(),
-            'devices'                 => $this->agent->device(),
-            'os'                      => $this->agent->platform(),
-            'os_version'              => $this->agent->version($this->agent->platform()),
-            'browser_name'            => $this->agent->browser(),
-            'browser_version'         => $this->agent->version($this->agent->browser()),
-            'browser_accept_language' => $agentLanguage,
-            'robot'                   => $this->agent->robot(),
-            'client_ip'               => $request->ip(),
-            'user_id'                 => $userId,
-            'created_at'              => Carbon::now(),
-        ];
-
         try {
-            $records = Signal::insert($logData);
+            $logData = self::getLogData($log, $level);
 
-            if (config('signal.email.sent')) {
-                try {
-                    Mail::to(config('signal.email.sentTo'))->send(new SignalMailer($logData));
-                }
-                catch (\Exception $e) {
-                    self::errorLog($e);
-                }
+            if (Signal::insert($logData)) {
+                self::sendMail($logData);
             }
         }
         catch (\Exception $e) {
@@ -349,39 +189,11 @@ class SignalEventSubcriber
      */
     public function onInfo(array $log, $level = 'info', array $param = [])
     {
-        $request       = (isset($log['request'])) ? $log['request'] : app('request');
-        $userId        = (null !== Auth::id()) ? Auth::id() : 0;
-        $agentLanguage = $this->toString($this->agent->languages());
-
-        $logData = [
-            'level'                   => $level,
-            'message'                 => $log['message'],
-            'request_full_url'        => $request->fullUrl() ? $request->fullUrl() : 'undefined',
-            'request_url'             => $request->url() ? $request->url() : 'undefined',
-            'request_uri'             => $request->path() ? $request->path() : 'undefined',
-            'request_method'          => app('request')->header('x-http-method-override') ? app('request')->header('x-http-method-override') : $request->method(),
-            'devices'                 => $this->agent->device(),
-            'os'                      => $this->agent->platform(),
-            'os_version'              => $this->agent->version($this->agent->platform()),
-            'browser_name'            => $this->agent->browser(),
-            'browser_version'         => $this->agent->version($this->agent->browser()),
-            'browser_accept_language' => $agentLanguage,
-            'robot'                   => $this->agent->robot(),
-            'client_ip'               => $request->ip(),
-            'user_id'                 => $userId,
-            'created_at'              => Carbon::now(),
-        ];
-
         try {
-            $records = Signal::insert($logData);
+            $logData = self::getLogData($log, $level);
 
-            if (config('signal.email.sent')) {
-                try {
-                    Mail::to(config('signal.email.sentTo'))->send(new SignalMailer($logData));
-                }
-                catch (\Exception $e) {
-                    self::errorLog($e);
-                }
+            if (Signal::insert($logData)) {
+                self::sendMail($logData);
             }
         }
         catch (\Exception $e) {
@@ -399,39 +211,11 @@ class SignalEventSubcriber
      */
     public function onDebug(array $log, $level = 'debug', array $param = [])
     {
-        $request       = (isset($log['request'])) ? $log['request'] : app('request');
-        $userId        = (null !== Auth::id()) ? Auth::id() : 0;
-        $agentLanguage = $this->toString($this->agent->languages());
-
-        $logData = [
-            'level'                   => $level,
-            'message'                 => $log['message'],
-            'request_full_url'        => $request->fullUrl() ? $request->fullUrl() : 'undefined',
-            'request_url'             => $request->url() ? $request->url() : 'undefined',
-            'request_uri'             => $request->path() ? $request->path() : 'undefined',
-            'request_method'          => app('request')->header('x-http-method-override') ? app('request')->header('x-http-method-override') : $request->method(),
-            'devices'                 => $this->agent->device(),
-            'os'                      => $this->agent->platform(),
-            'os_version'              => $this->agent->version($this->agent->platform()),
-            'browser_name'            => $this->agent->browser(),
-            'browser_version'         => $this->agent->version($this->agent->browser()),
-            'browser_accept_language' => $agentLanguage,
-            'robot'                   => $this->agent->robot(),
-            'client_ip'               => $request->ip(),
-            'user_id'                 => $userId,
-            'created_at'              => Carbon::now(),
-        ];
-
         try {
-            $records = Signal::insert($logData);
+            $logData = self::getLogData($log, $level);
 
-            if (config('signal.email.sent')) {
-                try {
-                    Mail::to(config('signal.email.sentTo'))->send(new SignalMailer($logData));
-                }
-                catch (\Exception $e) {
-                    self::errorLog($e);
-                }
+            if (Signal::insert($logData)) {
+                self::sendMail($logData);
             }
         }
         catch (\Exception $e) {
@@ -492,5 +276,49 @@ class SignalEventSubcriber
         }
 
         return $agent;
+    }
+
+    private function sendMail($data)
+    {
+        if (config('signal.email.sent')) {
+            try {
+                unset($data['created_at']);
+                $data['logMessage'] = $data['message'];
+                unset($data['message']);
+
+                Mail::to(config('signal.email.sentTo'))->send(new SignalMailer($data));
+            }
+            catch (\Exception $e) {
+                self::errorLog($e);
+            }
+        }
+    }
+
+    private function getLogData(array $log = [], $level = '', array $param = [])
+    {
+        $request       = (isset($log['request'])) ? $log['request'] : app('request');
+        $userId        = (null !== Auth::id()) ? Auth::id() : 0;
+        $agentLanguage = $this->toString($this->agent->languages());
+
+        $logData = [
+            'level'                   => $level,
+            'message'                 => $log['message'],
+            'request_full_url'        => $request->fullUrl() ? $request->fullUrl() : 'undefined',
+            'request_url'             => $request->url() ? $request->url() : 'undefined',
+            'request_uri'             => $request->path() ? $request->path() : 'undefined',
+            'request_method'          => app('request')->header('x-http-method-override') ? app('request')->header('x-http-method-override') : $request->method(),
+            'devices'                 => $this->agent->device(),
+            'os'                      => $this->agent->platform(),
+            'os_version'              => $this->agent->version($this->agent->platform()),
+            'browser_name'            => $this->agent->browser(),
+            'browser_version'         => $this->agent->version($this->agent->browser()),
+            'browser_accept_language' => $agentLanguage,
+            'robot'                   => $this->agent->robot(),
+            'client_ip'               => $request->ip(),
+            'user_id'                 => $userId,
+            'created_at'              => Carbon::now(),
+        ];
+
+        return $logData;
     }
 }
