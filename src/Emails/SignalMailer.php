@@ -1,4 +1,8 @@
 <?php
+/**
+ * SignalMailer.php
+ * Created by @anonymoussc on 02/07/2018 1:05 AM.
+ */
 
 namespace App\Components\Signal\Emails;
 
@@ -12,7 +16,6 @@ class SignalMailer extends Mailable
     use Queueable, SerializesModels;
 
     protected $emailLog;
-
 
     /**
      * Create a new message instance.
@@ -31,6 +34,6 @@ class SignalMailer extends Mailable
      */
     public function build()
     {
-        return $this->view('signal::index');
+        return $this->view('signal::email.signalmail')->with($this->emailLog);
     }
 }
