@@ -12,7 +12,7 @@ use App\Components\Signal\Models\Signal;
 use Jenssegers\Agent\Agent;
 use Carbon\Carbon;
 use App\Components\Signal\Emails\SignalMailer;
-use Onsigbaar\Foundation\Base\Traits\ErrorLog;
+use App\Components\Signal\Traits\ErrorLog;
 
 /**
  * Class SignalEventSubcriber
@@ -22,9 +22,6 @@ class SignalEventSubcriber
 {
     use ErrorLog;
 
-    /**
-     * @var \Jenssegers\Agent\Agent
-     */
     private $agent;
 
     public function __construct()
@@ -45,6 +42,14 @@ class SignalEventSubcriber
         $events->listen('event.notice', 'App\Components\Signal\Listeners\SignalEventSubcriber@onNotice', 10);
         $events->listen('event.info', 'App\Components\Signal\Listeners\SignalEventSubcriber@onInfo', 10);
         $events->listen('event.debug', 'App\Components\Signal\Listeners\SignalEventSubcriber@onDebug', 10);
+        $events->listen('signal.emergency', 'App\Components\Signal\Listeners\SignalEventSubcriber@onEmergency', 10);
+        $events->listen('signal.alert', 'App\Components\Signal\Listeners\SignalEventSubcriber@onAlert', 10);
+        $events->listen('signal.critical', 'App\Components\Signal\Listeners\SignalEventSubcriber@onCritical', 10);
+        $events->listen('signal.error', 'App\Components\Signal\Listeners\SignalEventSubcriber@onError', 10);
+        $events->listen('signal.warning', 'App\Components\Signal\Listeners\SignalEventSubcriber@onWarning', 10);
+        $events->listen('signal.notice', 'App\Components\Signal\Listeners\SignalEventSubcriber@onNotice', 10);
+        $events->listen('signal.info', 'App\Components\Signal\Listeners\SignalEventSubcriber@onInfo', 10);
+        $events->listen('signal.debug', 'App\Components\Signal\Listeners\SignalEventSubcriber@onDebug', 10);
     }
 
     /**
@@ -125,13 +130,9 @@ class SignalEventSubcriber
             $logData = self::getLogData($log, $level);
 
             if (Signal::insert($logData)) {
+
                 if (isset($log['error'])) {
-                    $logData['errorLog']         = true;
-                    $logData['getMessage']       = $log['error']->getMessage();
-                    $logData['getCode']          = $log['error']->getCode();
-                    $logData['getFile']          = $log['error']->getFile();
-                    $logData['getLine']          = $log['error']->getLine();
-                    $logData['getTraceAsString'] = $log['error']->getTraceAsString();
+                    $logData['errorLog'] = true;
                 }
 
                 self::sendMail($logData);
@@ -313,7 +314,7 @@ class SignalEventSubcriber
             'request_full_url'        => $request->fullUrl() ? $request->fullUrl() : 'undefined',
             'request_url'             => $request->url() ? $request->url() : 'undefined',
             'request_uri'             => $request->path() ? $request->path() : 'undefined',
-            'request_method'          => app('request')->header('x-http-method-override') ? app('request')->header('x-http-method-override') : $request->method(),
+            'request_method'          => (app('request')->header('x-http-method-override')) ? app('request')->header('x-http-method-override') : $request->method(),
             'devices'                 => $this->agent->device(),
             'os'                      => $this->agent->platform(),
             'os_version'              => $this->agent->version($this->agent->platform()),
@@ -325,6 +326,16 @@ class SignalEventSubcriber
             'user_id'                 => $userId,
             'created_at'              => Carbon::now(),
         ];
+
+        if (isset($log['error'])) {
+            if ($log['error'] instanceof \Exception) {
+                $logData['error_get_message'] = ($log['error']->getMessage()) ? $log['error']->getMessage() : null;
+                $logData['error_get_code']    = ($log['error']->getCode()) ? $log['error']->getCode() : null;
+                $logData['error_get_file']    = ($log['error']->getFile()) ? $log['error']->getFile() : null;
+                $logData['error_get_line']    = ($log['error']->getLine()) ? $log['error']->getLine() : null;
+                $logData['error_get_trace']   = ($log['error']->getTraceAsString()) ? $log['error']->getTraceAsString() : null;
+            }
+        }
 
         return $logData;
     }
