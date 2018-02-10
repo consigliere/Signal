@@ -27,5 +27,11 @@ class Signal extends Model
         "browser_accept_language",
         "robot",
         "client_ip",
+        "error_get_message",
+        "error_get_code",
+        "error_get_file",
+        "error_get_line",
+        "error_get_trace",
+        "user_id",
     ];
 }
