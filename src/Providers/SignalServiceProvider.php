@@ -80,7 +80,7 @@ class SignalServiceProvider extends ServiceProvider
             $sourcePath => $viewPath,
         ]);
 
-        $this->loadViewsFrom(array_merge(array_map(function ($path) {
+        $this->loadViewsFrom(array_merge(array_map(function($path) {
             return $path . '/components/signal';
         }, \Config::get('view.paths')), [$sourcePath]), 'signal');
     }
@@ -106,9 +106,10 @@ class SignalServiceProvider extends ServiceProvider
      *
      * @return void
      */
-    public function registerMigration(){
+    public function registerMigration()
+    {
         $this->publishes([
-            __DIR__.'/../../Database/Migrations/' => database_path('migrations')
+            __DIR__ . '/../../Database/Migrations/' => database_path('migrations'),
         ], 'migrations-signal');
     }
 
