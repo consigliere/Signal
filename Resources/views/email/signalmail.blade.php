@@ -21,24 +21,24 @@
     @isset($errorLog)
         @if ($errorLog === true)
             <p>StackTrace : </p>
-            @isset($getMessage)
-                <p>Message : {{ $getMessage }}</p>
+            @isset($error_get_message)
+                <p>Message : {{ $error_get_message }}</p>
             @endisset
 
-            @isset($getCode)
-                <p>Code : {{ $getCode }}</p>
+            @isset($error_get_code)
+                <p>Code : {{ $error_get_code }}</p>
             @endisset
 
-            @isset($getFile)
-                <p>File : {{ $getFile }}</p>
+            @isset($error_get_file)
+                <p>File : {{ $error_get_file }}</p>
             @endisset
 
-            @isset($getLine)
-                <p>Line : {{ $getLine }}</p>
+            @isset($error_get_line)
+                <p>Line : {{ $error_get_line }}</p>
             @endisset
 
-            @isset($getTraceAsString)
-                <p>Trace : {{ $getTraceAsString }}</p>
+            @isset($error_get_trace)
+                <p>Trace : {{ $error_get_trace }}</p>
             @endisset
         @endif
     @endisset
