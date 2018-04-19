@@ -23,4 +23,7 @@ return [
         'sent'   => env('SIGNAL_EMAIL_SENT', false),
         'sentTo' => env('SIGNAL_EMAIL_SENT_TO', 'noreply@example.com'),
     ],
+
+    // Table name the data will be insert into
+    'table' => env('SIGNAL_TABLE', 'sg_log'),
 ];
