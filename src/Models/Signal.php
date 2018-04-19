@@ -34,4 +34,11 @@ class Signal extends Model
         "error_get_trace",
         "user_id",
     ];
+
+    public function __construct(array $attributes = [])
+    {
+        parent::__construct($attributes);
+
+        $this->table = config('signal.table');
+    }
 }
