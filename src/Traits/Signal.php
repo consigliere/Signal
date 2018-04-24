@@ -17,29 +17,32 @@ trait Signal
     protected function fireLog($type, $message = '', array $param = [])
     {
         switch ($type) {
-            case 'emergencyOrError':
+            case 'emergency':
                 $this->logEmergency($message, $param);
                 break;
-            case 'alertOrError':
+            case 'alert':
                 $this->logAlert($message, $param);
                 break;
-            case 'criticalOrError':
+            case 'critical':
                 $this->logCritical($message, $param);
                 break;
             case 'error':
                 $this->logError($message, $param);
                 break;
-            case 'warningOrError':
+            case 'warning':
                 $this->logWarning($message, $param);
                 break;
-            case 'noticeOrError':
+            case 'notice':
                 $this->logNotice($message, $param);
                 break;
-            case 'infoOrError':
+            case 'info':
                 $this->logInfo($message, $param);
                 break;
-            case 'debugOrError':
+            case 'debug':
                 $this->logDebug($message, $param);
+                break;
+            case 'custom-debug':
+                $this->logCustomDebug($message, $param);
                 break;
             default:
                 $this->logInfo($message, $param);
@@ -52,14 +55,8 @@ trait Signal
      */
     private function logEmergency($message = 'Success', array $param = [])
     {
-        if ((isset($param['status'])) && (!$param['status'])) {
-            if ((config('signal.log.activity')) && (config('signal.log.error'))) {
-                \Event::fire('event.error', [['message' => $param['e']->getMessage()]]);
-            }
-        } else {
-            if ((config('signal.log.activity')) && (config('signal.log.emergency'))) {
-                \Event::fire('event.emergency', [['message' => $message]]);
-            }
+        if ((config('signal.log.activity')) && (config('signal.log.emergency'))) {
+            \Event::fire('signal.emergency', [['message' => $message]]);
         }
     }
 
@@ -69,14 +66,8 @@ trait Signal
      */
     private function logAlert($message = 'Success', array $param = [])
     {
-        if ((isset($param['status'])) && (!$param['status'])) {
-            if ((config('signal.log.activity')) && (config('signal.log.error'))) {
-                \Event::fire('event.error', [['message' => $param['e']->getMessage()]]);
-            }
-        } else {
-            if ((config('signal.log.activity')) && (config('signal.log.alert'))) {
-                \Event::fire('event.alert', [['message' => $message]]);
-            }
+        if ((config('signal.log.activity')) && (config('signal.log.alert'))) {
+            \Event::fire('signal.alert', [['message' => $message]]);
         }
     }
 
@@ -86,14 +77,8 @@ trait Signal
      */
     private function logCritical($message = 'Success', array $param = [])
     {
-        if ((isset($param['status'])) && (!$param['status'])) {
-            if ((config('signal.log.activity')) && (config('signal.log.error'))) {
-                \Event::fire('event.error', [['message' => $param['e']->getMessage()]]);
-            }
-        } else {
-            if ((config('signal.log.activity')) && (config('signal.log.critical'))) {
-                \Event::fire('event.critical', [['message' => $message]]);
-            }
+        if ((config('signal.log.activity')) && (config('signal.log.critical'))) {
+            \Event::fire('signal.critical', [['message' => $message]]);
         }
     }
 
@@ -103,18 +88,8 @@ trait Signal
      */
     private function logError($message = 'Error', array $param = [])
     {
-        if ((isset($param['status'])) && (!$param['status'])) {
-            if ((config('signal.log.activity')) && (config('signal.log.error'))) {
-                \Event::fire('event.error', [['message' => $param['e']->getMessage()]]);
-            }
-        } else {
-            if ((config('signal.log.activity')) && (config('signal.log.error'))) {
-                if ((isset($param['error'])) && (!$param['error'])) {
-                    \Event::fire('signal.error', [['message' => $message, 'error' => $param['error']]]); // $error instanceof \Exception
-                } else {
-                    \Event::fire('event.error', [['message' => $message]]);
-                }
-            }
+        if ((config('signal.log.activity')) && (config('signal.log.error'))) {
+            \Event::fire('signal.error', [['message' => $message, 'error' => $param['error']]]); // $error instanceof \Exception
         }
     }
 
@@ -124,14 +99,8 @@ trait Signal
      */
     private function logWarning($message = 'Success', array $param = [])
     {
-        if ((isset($param['status'])) && (!$param['status'])) {
-            if ((config('signal.log.activity')) && (config('signal.log.error'))) {
-                \Event::fire('event.error', [['message' => $param['e']->getMessage()]]);
-            }
-        } else {
-            if ((config('signal.log.activity')) && (config('signal.log.warning'))) {
-                \Event::fire('event.warning', [['message' => $message]]);
-            }
+        if ((config('signal.log.activity')) && (config('signal.log.warning'))) {
+            \Event::fire('signal.warning', [['message' => $message]]);
         }
     }
 
@@ -141,14 +110,8 @@ trait Signal
      */
     private function logNotice($message = 'Success', array $param = [])
     {
-        if ((isset($param['status'])) && (!$param['status'])) {
-            if ((config('signal.log.activity')) && (config('signal.log.error'))) {
-                \Event::fire('event.error', [['message' => $param['e']->getMessage()]]);
-            }
-        } else {
-            if ((config('signal.log.activity')) && (config('signal.log.notice'))) {
-                \Event::fire('event.notice', [['message' => $message]]);
-            }
+        if ((config('signal.log.activity')) && (config('signal.log.notice'))) {
+            \Event::fire('signal.notice', [['message' => $message]]);
         }
     }
 
@@ -158,14 +121,8 @@ trait Signal
      */
     private function logInfo($message = 'Success', array $param = [])
     {
-        if ((isset($param['status'])) && (!$param['status'])) {
-            if ((config('signal.log.activity')) && (config('signal.log.error'))) {
-                \Event::fire('event.error', [['message' => $param['e']->getMessage()]]);
-            }
-        } else {
-            if ((config('signal.log.activity')) && (config('signal.log.info'))) {
-                \Event::fire('event.info', [['message' => $message]]);
-            }
+        if ((config('signal.log.activity')) && (config('signal.log.info'))) {
+            \Event::fire('signal.info', [['message' => $message]]);
         }
     }
 
@@ -174,6 +131,17 @@ trait Signal
      * @param array  $param
      */
     private function logDebug($message = 'Success', array $param = [])
+    {
+        if ((config('signal.log.activity')) && (config('signal.log.debug'))) {
+            \Event::fire('signal.debug', [['message' => $message]]);
+        }
+    }
+
+    /**
+     * @param string $message
+     * @param array  $param
+     */
+    private function logCustomDebug($message = 'Success', array $param = [])
     {
         $table     = (isset($param['table'])) ? $param['table'] : 'N/A';
         $condition = (isset($param['condition'])) ? $param['condition'] : 'N/A';
@@ -186,7 +154,7 @@ trait Signal
         }
         if ((isset($param['status'])) && (!$param['status'])) {
             if ((config('signal.log.activity')) && (config('signal.log.error'))) {
-                \Event::fire('event.error', [['message' => $param['e']->getMessage()]]);
+                \Event::fire('signal.error', [['message' => $param['e']->getMessage()]]);
             }
         } else {
             if ((config('signal.log.activity')) && (config('signal.log.debug'))) {
@@ -194,11 +162,11 @@ trait Signal
                     $query      = $construct->toSql();
                     $queryCount = $construct->count();
 
-                    \Event::fire('event.debug', [
+                    \Event::fire('signal.debug', [
                         ['message' => 'Success get data from ' . $table . ' table, count records "' . $queryCount . '", with query : "' . $query . '"'],
                     ]);
                 } else {
-                    \Event::fire('event.debug', [['message' => $message]]);
+                    \Event::fire('signal.debug', [['message' => $message]]);
                 }
             }
         }
