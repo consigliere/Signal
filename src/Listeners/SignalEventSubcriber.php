@@ -34,14 +34,6 @@ class SignalEventSubcriber
      */
     public function subscribe($events)
     {
-        $events->listen('event.emergency', 'App\Components\Signal\Listeners\SignalEventSubcriber@onEmergency', 10);
-        $events->listen('event.alert', 'App\Components\Signal\Listeners\SignalEventSubcriber@onAlert', 10);
-        $events->listen('event.critical', 'App\Components\Signal\Listeners\SignalEventSubcriber@onCritical', 10);
-        $events->listen('event.error', 'App\Components\Signal\Listeners\SignalEventSubcriber@onError', 10);
-        $events->listen('event.warning', 'App\Components\Signal\Listeners\SignalEventSubcriber@onWarning', 10);
-        $events->listen('event.notice', 'App\Components\Signal\Listeners\SignalEventSubcriber@onNotice', 10);
-        $events->listen('event.info', 'App\Components\Signal\Listeners\SignalEventSubcriber@onInfo', 10);
-        $events->listen('event.debug', 'App\Components\Signal\Listeners\SignalEventSubcriber@onDebug', 10);
         $events->listen('signal.emergency', 'App\Components\Signal\Listeners\SignalEventSubcriber@onEmergency', 10);
         $events->listen('signal.alert', 'App\Components\Signal\Listeners\SignalEventSubcriber@onAlert', 10);
         $events->listen('signal.critical', 'App\Components\Signal\Listeners\SignalEventSubcriber@onCritical', 10);
