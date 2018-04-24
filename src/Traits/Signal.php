@@ -109,7 +109,11 @@ trait Signal
             }
         } else {
             if ((config('signal.log.activity')) && (config('signal.log.error'))) {
-                \Event::fire('event.error', [['message' => $message]]);
+                if ((isset($param['error'])) && (!$param['error'])) {
+                    \Event::fire('signal.error', [['message' => $message, 'error' => $param['error']]]); // $error instanceof \Exception
+                } else {
+                    \Event::fire('event.error', [['message' => $message]]);
+                }
             }
         }
     }
