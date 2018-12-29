@@ -4,7 +4,7 @@
  * Created by @anonymoussc on 01/28/2018 3:57 AM.
  */
 
-namespace App\Components\Signal\Traits;
+namespace App\Components\Signal\Shared;
 
 use Illuminate\Support\Facades\Log;
 

@@ -1,0 +1,14 @@
+{
+    "name": "Signal",
+    "alias": "signal",
+    "description": "",
+    "keywords": [],
+    "active": 1,
+    "order": 0,
+    "providers": [
+        "App\\Components\\Signal\\Providers\\SignalServiceProvider"
+    ],
+    "aliases": {},
+    "files": [],
+    "requires": []
+}

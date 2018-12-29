@@ -4,7 +4,7 @@
  * Created by @anonymoussc on 6/3/2017 11:11 PM.
  */
 
-namespace App\Components\Signal\Traits;
+namespace App\Components\Signal\Shared;
 
 
 trait Signal

@@ -1,27 +1,30 @@
 {
-  "name"       : "consigliere/signal",
-  "description": "",
-  "authors"    : [
-    {
-      "name" : "anonymoussc",
-      "email": "50c5ac69@opayq.com"
+    "name": "consigliere/signal",
+    "description": "",
+    "authors": [
+        {
+            "name": "anonymoussc",
+            "email": "50c5ac69@opayq.com"
+        }
+    ],
+    "require"    : {
+        "illuminate/support"  : "5.5.*|5.6.*|5.7.*",
+        "illuminate/contracts": "5.5.*|5.6.*|5.7.*",
+        "jenssegers/agent"    : "^2.4"
+      },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "App\\Components\\Signal\\Providers\\SignalServiceProvider"
+            ],
+            "aliases": {
+                
+            }
+        }
+    },
+    "autoload": {
+        "psr-4": {
+            "App\\Components\\Signal\\": ""
+        }
     }
-  ],
-  "autoload"   : {
-    "psr-4": {
-      "App\\Components\\Signal\\": "src"
-    }
-  },
-  "require"    : {
-    "illuminate/support"  : "5.5.*",
-    "illuminate/contracts": "5.5.*",
-    "jenssegers/agent"    : "^2.4"
-  },
-  "extra"      : {
-    "laravel": {
-      "providers": [
-        "App\\Components\\Signal\\Providers\\SignalServiceProvider"
-      ]
-    }
-  }
 }

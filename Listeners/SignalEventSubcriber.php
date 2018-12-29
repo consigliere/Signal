@@ -8,11 +8,11 @@ namespace App\Components\Signal\Listeners;
 
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
-use App\Components\Signal\Models\Signal;
+use App\Components\Signal\Entities\Signal;
 use Jenssegers\Agent\Agent;
 use Carbon\Carbon;
 use App\Components\Signal\Emails\SignalMailer;
-use App\Components\Signal\Traits\ErrorLog;
+use App\Components\Signal\Shared\ErrorLog;
 
 /**
  * Class SignalEventSubcriber

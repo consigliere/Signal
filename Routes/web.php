@@ -1,9 +1,16 @@
 <?php
-/**
- * web.php
- * Created by @anonymoussc on 6/27/2017 12:46 PM.
- */
 
-Route::group(['middleware' => 'web', 'prefix' => 'signal', 'namespace' => 'App\Components\Signal\Http\Controllers'], function () {
-    // Route::get('/', 'SignalController@index');
+/*
+|--------------------------------------------------------------------------
+| Web Routes
+|--------------------------------------------------------------------------
+|
+| Here is where you can register web routes for your application. These
+| routes are loaded by the RouteServiceProvider within a group which
+| contains the "web" middleware group. Now create something great!
+|
+*/
+
+Route::prefix('signal')->group(function() {
+    Route::get('/', 'SignalController@index');
 });

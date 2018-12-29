@@ -1,10 +1,6 @@
 <?php
-/**
- * Signal.php
- * Created by @anonymoussc on 6/3/2017 11:07 PM.
- */
 
-namespace App\Components\Signal\Models;
+namespace App\Components\Signal\Entities;
 
 use Illuminate\Database\Eloquent\Model;
 
