@@ -3,6 +3,7 @@
 namespace App\Components\Signal\Entities;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Config;
 
 class Signal extends Model
 {
@@ -35,6 +36,6 @@ class Signal extends Model
     {
         parent::__construct($attributes);
 
-        $this->table = config('signal.table');
+        $this->table = Config::get('signal.table');
     }
 }

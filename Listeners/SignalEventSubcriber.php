@@ -6,8 +6,7 @@
 
 namespace App\Components\Signal\Listeners;
 
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\{Auth, Mail, Config, App};
 use App\Components\Signal\Entities\Signal;
 use Jenssegers\Agent\Agent;
 use Carbon\Carbon;
@@ -251,7 +250,7 @@ class SignalEventSubcriber
      */
     private function gatherSenderAddress()
     {
-        $sender = config('mail.from', []);
+        $sender = Config::get('mail.from', []);
         if (!array_key_exists('address', $sender) || is_null($sender['address'])) {
             return ['address' => 'noreply@example.com', 'name' => ''];
         }
@@ -280,13 +279,13 @@ class SignalEventSubcriber
 
     private function sendMail($data)
     {
-        if (config('signal.email.sent')) {
+        if (Config::get('signal.email.sent')) {
             try {
                 unset($data['created_at']);
                 $data['logMessage'] = $data['message'];
                 unset($data['message']);
 
-                Mail::to(config('signal.email.sentTo'))->send(new SignalMailer($data));
+                Mail::to(Config::get('signal.email.sentTo'))->send(new SignalMailer($data));
             }
             catch (\Exception $e) {
                 self::errorLog($e);
@@ -296,7 +295,7 @@ class SignalEventSubcriber
 
     private function getLogData(array $log = [], $level = '', array $param = [])
     {
-        $request       = (isset($log['request'])) ? $log['request'] : app('request');
+        $request       = (isset($log['request'])) ? $log['request'] : App::get('request');
         $userId        = (null !== Auth::id()) ? Auth::id() : 0;
         $agentLanguage = $this->toString($this->agent->languages());
 
@@ -306,7 +305,7 @@ class SignalEventSubcriber
             'request_full_url'        => $request->fullUrl() ? $request->fullUrl() : 'undefined',
             'request_url'             => $request->url() ? $request->url() : 'undefined',
             'request_uri'             => $request->path() ? $request->path() : 'undefined',
-            'request_method'          => (app('request')->header('x-http-method-override')) ? app('request')->header('x-http-method-override') : $request->method(),
+            'request_method'          => (App::get('request')->header('x-http-method-override')) ? App::get('request')->header('x-http-method-override') : $request->method(),
             'devices'                 => $this->agent->device(),
             'os'                      => $this->agent->platform(),
             'os_version'              => $this->agent->version($this->agent->platform()),
