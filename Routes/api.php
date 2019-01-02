@@ -14,5 +14,5 @@ use Illuminate\Http\Request;
 */
 
 Route::middleware('auth:api')->get('/signal', function (Request $request) {
-    return $request->user();
+    // return $request->user();
 });
