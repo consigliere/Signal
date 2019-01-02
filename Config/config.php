@@ -13,7 +13,7 @@ return [
         'error'     => true,
         'warning'   => false,
         'notice'    => false,
-        'info'      => false,
+        'info'      => true,
         'debug'     => false,
     ],
 
