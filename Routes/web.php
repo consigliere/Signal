@@ -11,6 +11,6 @@
 |
 */
 
-Route::prefix('signal')->group(function() {
-    // Route::get('/', 'SignalController@index');
-});
+//Route::prefix('signal')->group(function() {
+//    Route::get('/', 'SignalController@index');
+//});
