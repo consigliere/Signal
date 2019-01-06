@@ -8,7 +8,10 @@ namespace App\Components\Signal\Shared;
 
 use  Illuminate\Support\Facades\Config;
 
-
+/**
+ * Trait Signal
+ * @package App\Components\Signal\Shared
+ */
 trait Signal
 {
     /**
@@ -16,7 +19,7 @@ trait Signal
      * @param string $message
      * @param array  $param
      */
-    protected function fireLog($type, $message = '', array $param = [])
+    protected function fireLog($type, $message = '', array $param = []): void
     {
         switch ($type) {
             case 'emergency':
@@ -55,7 +58,7 @@ trait Signal
      * @param string $message
      * @param array  $param
      */
-    private function logEmergency($message = 'Success', array $param = [])
+    private function logEmergency($message = 'Success', array $param = []): void
     {
         if ((Config::get('signal.log.activity')) && (Config::get('signal.log.emergency'))) {
             \Event::fire('signal.emergency', [['message' => $message]]);
@@ -66,7 +69,7 @@ trait Signal
      * @param string $message
      * @param array  $param
      */
-    private function logAlert($message = 'Success', array $param = [])
+    private function logAlert($message = 'Success', array $param = []): void
     {
         if ((Config::get('signal.log.activity')) && (Config::get('signal.log.alert'))) {
             \Event::fire('signal.alert', [['message' => $message]]);
@@ -77,7 +80,7 @@ trait Signal
      * @param string $message
      * @param array  $param
      */
-    private function logCritical($message = 'Success', array $param = [])
+    private function logCritical($message = 'Success', array $param = []): void
     {
         if ((Config::get('signal.log.activity')) && (Config::get('signal.log.critical'))) {
             \Event::fire('signal.critical', [['message' => $message]]);
@@ -88,7 +91,7 @@ trait Signal
      * @param string $message
      * @param array  $param
      */
-    private function logError($message = 'Error', array $param = [])
+    private function logError($message = 'Error', array $param = []): void
     {
         if ((Config::get('signal.log.activity')) && (Config::get('signal.log.error'))) {
             \Event::fire('signal.error', [['message' => $message, 'error' => $param['error']]]); // $error instanceof \Exception
@@ -99,7 +102,7 @@ trait Signal
      * @param string $message
      * @param array  $param
      */
-    private function logWarning($message = 'Success', array $param = [])
+    private function logWarning($message = 'Success', array $param = []): void
     {
         if ((Config::get('signal.log.activity')) && (Config::get('signal.log.warning'))) {
             \Event::fire('signal.warning', [['message' => $message]]);
@@ -110,7 +113,7 @@ trait Signal
      * @param string $message
      * @param array  $param
      */
-    private function logNotice($message = 'Success', array $param = [])
+    private function logNotice($message = 'Success', array $param = []): void
     {
         if ((Config::get('signal.log.activity')) && (Config::get('signal.log.notice'))) {
             \Event::fire('signal.notice', [['message' => $message]]);
@@ -121,7 +124,7 @@ trait Signal
      * @param string $message
      * @param array  $param
      */
-    private function logInfo($message = 'Success', array $param = [])
+    private function logInfo($message = 'Success', array $param = []): void
     {
         if ((Config::get('signal.log.activity')) && (Config::get('signal.log.info'))) {
             \Event::fire('signal.info', [['message' => $message]]);
@@ -132,7 +135,7 @@ trait Signal
      * @param string $message
      * @param array  $param
      */
-    private function logDebug($message = 'Success', array $param = [])
+    private function logDebug($message = 'Success', array $param = []): void
     {
         if ((Config::get('signal.log.activity')) && (Config::get('signal.log.debug'))) {
             \Event::fire('signal.debug', [['message' => $message]]);
@@ -143,7 +146,7 @@ trait Signal
      * @param string $message
      * @param array  $param
      */
-    private function logCustomDebug($message = 'Success', array $param = [])
+    private function logCustomDebug($message = 'Success', array $param = []): void
     {
         $table     = (isset($param['table'])) ? $param['table'] : 'N/A';
         $condition = (isset($param['condition'])) ? $param['condition'] : 'N/A';
