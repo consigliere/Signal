@@ -9,8 +9,11 @@ namespace App\Components\Signal\Emails;
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
-use Illuminate\Contracts\Queue\ShouldQueue;
 
+/**
+ * Class SignalMailer
+ * @package App\Components\Signal\Emails
+ */
 class SignalMailer extends Mailable
 {
     use Queueable, SerializesModels;
