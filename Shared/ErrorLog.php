@@ -17,7 +17,7 @@ trait ErrorLog
     /**
      * @param $error
      */
-    public function errorLog($error)
+    public function errorLog($error): void
     {
         Log::error($error->getMessage());
         Log::error($error->getCode());
