@@ -14,7 +14,7 @@ class Signal extends Model
     /**
      * @var mixed|string
      */
-    protected $table      = 'sg_log';
+    protected $table      = 'signal_log';
     /**
      * @var string
      */
