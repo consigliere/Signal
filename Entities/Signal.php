@@ -5,11 +5,24 @@ namespace App\Components\Signal\Entities;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Config;
 
+/**
+ * Class Signal
+ * @package App\Components\Signal\Entities
+ */
 class Signal extends Model
 {
+    /**
+     * @var mixed|string
+     */
     protected $table      = 'sg_log';
+    /**
+     * @var string
+     */
     protected $primaryKey = 'id';
-    protected $fillable   = [
+    /**
+     * @var array
+     */
+    protected $fillable = [
         "level",
         "message",
         "request_full_url",
@@ -32,6 +45,11 @@ class Signal extends Model
         "user_id",
     ];
 
+    /**
+     * Signal constructor.
+     *
+     * @param array $attributes
+     */
     public function __construct(array $attributes = [])
     {
         parent::__construct($attributes);
