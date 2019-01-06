@@ -8,8 +8,15 @@ namespace App\Components\Signal\Shared;
 
 use Illuminate\Support\Facades\Log;
 
+/**
+ * Trait ErrorLog
+ * @package App\Components\Signal\Shared
+ */
 trait ErrorLog
 {
+    /**
+     * @param $error
+     */
     public function errorLog($error)
     {
         Log::error($error->getMessage());
