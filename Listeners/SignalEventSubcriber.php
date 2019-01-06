@@ -6,7 +6,9 @@
 
 namespace App\Components\Signal\Listeners;
 
-use Illuminate\Support\Facades\{Auth, Mail, Config, App};
+use Illuminate\Support\Facades\{
+    Auth, Mail, Config, App
+};
 use App\Components\Signal\Entities\Signal;
 use Jenssegers\Agent\Agent;
 use Carbon\Carbon;
@@ -21,8 +23,14 @@ class SignalEventSubcriber
 {
     use ErrorLog;
 
+    /**
+     * @var \Jenssegers\Agent\Agent
+     */
     private $agent;
 
+    /**
+     * SignalEventSubcriber constructor.
+     */
     public function __construct()
     {
         $this->agent = new Agent;
@@ -31,7 +39,7 @@ class SignalEventSubcriber
     /**
      * @param $events
      */
-    public function subscribe($events)
+    public function subscribe($events): void
     {
         $events->listen('signal.emergency', 'App\Components\Signal\Listeners\SignalEventSubcriber@onEmergency', 10);
         $events->listen('signal.alert', 'App\Components\Signal\Listeners\SignalEventSubcriber@onAlert', 10);
@@ -46,10 +54,11 @@ class SignalEventSubcriber
     /**
      * @param array  $log
      * @param string $level
+     * @param array  $param
      *
      * @return bool
      */
-    public function onEmergency(array $log, $level = 'emergency', array $param = [])
+    public function onEmergency(array $log, $level = 'emergency', array $param = []): bool
     {
         try {
             $logData = self::getLogData($log, $level);
@@ -57,8 +66,7 @@ class SignalEventSubcriber
             if (Signal::insert($logData)) {
                 self::sendMail($logData);
             }
-        }
-        catch (\Exception $e) {
+        } catch (\Exception $e) {
             self::errorLog($e);
         }
 
@@ -68,10 +76,11 @@ class SignalEventSubcriber
     /**
      * @param array  $log
      * @param string $level
+     * @param array  $param
      *
      * @return bool
      */
-    public function onAlert(array $log, $level = 'alert', array $param = [])
+    public function onAlert(array $log, $level = 'alert', array $param = []): bool
     {
         try {
             $logData = self::getLogData($log, $level);
@@ -79,8 +88,7 @@ class SignalEventSubcriber
             if (Signal::insert($logData)) {
                 self::sendMail($logData);
             }
-        }
-        catch (\Exception $e) {
+        } catch (\Exception $e) {
             self::errorLog($e);
         }
 
@@ -90,10 +98,11 @@ class SignalEventSubcriber
     /**
      * @param array  $log
      * @param string $level
+     * @param array  $param
      *
      * @return bool
      */
-    public function onCritical(array $log, $level = 'critical', array $param = [])
+    public function onCritical(array $log, $level = 'critical', array $param = []): bool
     {
         try {
             $logData = self::getLogData($log, $level);
@@ -101,8 +110,7 @@ class SignalEventSubcriber
             if (Signal::insert($logData)) {
                 self::sendMail($logData);
             }
-        }
-        catch (\Exception $e) {
+        } catch (\Exception $e) {
             self::errorLog($e);
         }
 
@@ -112,10 +120,11 @@ class SignalEventSubcriber
     /**
      * @param array  $log
      * @param string $level
+     * @param array  $param
      *
      * @return bool
      */
-    public function onError(array $log, $level = 'error', array $param = [])
+    public function onError(array $log, $level = 'error', array $param = []): bool
     {
         try {
             $logData = self::getLogData($log, $level);
@@ -128,8 +137,7 @@ class SignalEventSubcriber
 
                 self::sendMail($logData);
             }
-        }
-        catch (\Exception $e) {
+        } catch (\Exception $e) {
             self::errorLog($e);
         }
 
@@ -139,10 +147,11 @@ class SignalEventSubcriber
     /**
      * @param array  $log
      * @param string $level
+     * @param array  $param
      *
      * @return bool
      */
-    public function onWarning(array $log, $level = 'warning', array $param = [])
+    public function onWarning(array $log, $level = 'warning', array $param = []): bool
     {
         try {
             $logData = self::getLogData($log, $level);
@@ -150,8 +159,7 @@ class SignalEventSubcriber
             if (Signal::insert($logData)) {
                 self::sendMail($logData);
             }
-        }
-        catch (\Exception $e) {
+        } catch (\Exception $e) {
             self::errorLog($e);
         }
 
@@ -161,10 +169,11 @@ class SignalEventSubcriber
     /**
      * @param array  $log
      * @param string $level
+     * @param array  $param
      *
      * @return bool
      */
-    public function onNotice(array $log, $level = 'notice', array $param = [])
+    public function onNotice(array $log, $level = 'notice', array $param = []): bool
     {
         try {
             $logData = self::getLogData($log, $level);
@@ -172,8 +181,7 @@ class SignalEventSubcriber
             if (Signal::insert($logData)) {
                 self::sendMail($logData);
             }
-        }
-        catch (\Exception $e) {
+        } catch (\Exception $e) {
             self::errorLog($e);
         }
 
@@ -183,10 +191,11 @@ class SignalEventSubcriber
     /**
      * @param array  $log
      * @param string $level
+     * @param array  $param
      *
      * @return bool
      */
-    public function onInfo(array $log, $level = 'info', array $param = [])
+    public function onInfo(array $log, $level = 'info', array $param = []): bool
     {
         try {
             $logData = self::getLogData($log, $level);
@@ -194,8 +203,7 @@ class SignalEventSubcriber
             if (Signal::insert($logData)) {
                 self::sendMail($logData);
             }
-        }
-        catch (\Exception $e) {
+        } catch (\Exception $e) {
             self::errorLog($e);
         }
 
@@ -205,10 +213,11 @@ class SignalEventSubcriber
     /**
      * @param array  $log
      * @param string $level
+     * @param array  $param
      *
      * @return bool
      */
-    public function onDebug(array $log, $level = 'debug', array $param = [])
+    public function onDebug(array $log, $level = 'debug', array $param = []): bool
     {
         try {
             $logData = self::getLogData($log, $level);
@@ -216,8 +225,7 @@ class SignalEventSubcriber
             if (Signal::insert($logData)) {
                 self::sendMail($logData);
             }
-        }
-        catch (\Exception $e) {
+        } catch (\Exception $e) {
             self::errorLog($e);
         }
 
@@ -225,17 +233,15 @@ class SignalEventSubcriber
     }
 
     /**
-     * Convenience function for sending mail
-     *
      * @param       $email
      * @param       $subject
      * @param       $view
      * @param array $data
      */
-    private function sendTo($email, $subject, $view, $data = [])
+    private function sendTo($email, $subject, $view, $data = []): void
     {
         $sender = $this->gatherSenderAddress();
-        Mail::queue($view, $data, function($message) use ($email, $subject, $sender) {
+        Mail::queue($view, $data, function ($message) use ($email, $subject, $sender) {
             $message->to($email)
                 ->from($sender['address'], $sender['name'])
                 ->subject($subject);
@@ -243,9 +249,6 @@ class SignalEventSubcriber
     }
 
     /**
-     * If the application does not have a valid "from" address configured, we should stub in
-     * a temporary alternative so we have something to pass to the Mailer
-     *
      * @return array|mixed
      */
     private function gatherSenderAddress()
@@ -266,7 +269,7 @@ class SignalEventSubcriber
      *
      * @return string
      */
-    private function toString($language)
+    private function toString($language): string
     {
         if (is_array($language)) {
             $agent = json_encode($language);
@@ -277,7 +280,10 @@ class SignalEventSubcriber
         return $agent;
     }
 
-    private function sendMail($data)
+    /**
+     * @param $data
+     */
+    private function sendMail($data): void
     {
         if (Config::get('signal.email.sent')) {
             try {
@@ -286,14 +292,20 @@ class SignalEventSubcriber
                 unset($data['message']);
 
                 Mail::to(Config::get('signal.email.sentTo'))->send(new SignalMailer($data));
-            }
-            catch (\Exception $e) {
+            } catch (\Exception $e) {
                 self::errorLog($e);
             }
         }
     }
 
-    private function getLogData(array $log = [], $level = '', array $param = [])
+    /**
+     * @param array  $log
+     * @param string $level
+     * @param array  $param
+     *
+     * @return array
+     */
+    private function getLogData(array $log = [], $level = '', array $param = []): array
     {
         $request       = (isset($log['request'])) ? $log['request'] : App::get('request');
         $userId        = (null !== Auth::id()) ? Auth::id() : 0;
