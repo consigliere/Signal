@@ -22,8 +22,9 @@
     }
   },
   "require"    : {
-    "illuminate/support"  : "5.8.*",
-    "illuminate/contracts": "5.8.*",
-    "jenssegers/agent"    : "^2.4"
+    "illuminate/support"    : "5.8.*",
+    "illuminate/contracts"  : "5.8.*",
+    "jenssegers/agent"      : "^2.4",
+    "webpatser/laravel-uuid": "^3.0"
   }
 }
