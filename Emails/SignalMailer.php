@@ -1,5 +1,10 @@
 <?php
 /**
+ * Copyright(c) 2019. All rights reserved.
+ * Last modified 5/18/19 11:15 AM
+ */
+
+/**
  * SignalMailer.php
  * Created by @anonymoussc on 02/07/2018 1:05 AM.
  */
@@ -35,7 +40,7 @@ class SignalMailer extends Mailable
      *
      * @return $this
      */
-    public function build()
+    public function build(): self
     {
         return $this->view('signal::email.signalmail')->with($this->emailLog);
     }
