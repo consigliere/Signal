@@ -1,7 +1,7 @@
 <?php
 /**
  * Copyright(c) 2019. All rights reserved.
- * Last modified 5/19/19 3:17 PM
+ * Last modified 5/20/19 12:04 AM
  */
 
 /**
@@ -268,7 +268,13 @@ class SignalEventSubcriber
                 $data['logMessage'] = $data['message'];
                 unset($data['message']);
 
-                Mail::to(Config::get('signal.email.sentTo'))->send(new SignalMailer($data));
+                $emails = explode(",", Config::get('signal.email.sentTo'));
+
+                foreach ($emails as $email) {
+                    if (filter_var($email, FILTER_VALIDATE_EMAIL)) {
+                        Mail::to($email)->send(new SignalMailer($data));
+                    }
+                }
             } catch (\Exception $e) {
                 $this->errorLog($e);
             }
