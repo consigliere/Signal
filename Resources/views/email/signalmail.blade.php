@@ -1,7 +1,8 @@
 @extends('signal::layouts.signalmail-master')
 
 @section('content')
-    <h1>Log Level : {{ $level }}</h1>
+    <span class="preheader" style="color: transparent; display: none; height: 0; max-height: 0; max-width: 0; opacity: 0; overflow: hidden; mso-hide: all; visibility: hidden; width: 0;">Your {{ $level }} notification has arrived.</span>
+    <h1>{{ $level }}</h1>
 
     <p>Message : {{ $logMessage }}</p>
     <p>Request full url : {{ $request_full_url }}</p>
