@@ -1,7 +1,7 @@
 <?php
 /**
  * Copyright(c) 2019. All rights reserved.
- * Last modified 4/15/19 8:43 AM
+ * Last modified 5/19/19 3:18 PM
  */
 
 /**
@@ -12,7 +12,6 @@
 namespace App\Components\Signal\Shared;
 
 use Illuminate\Support\Facades\Config;
-use Illuminate\Support\Facades\Event;
 
 /**
  * Trait Signal
@@ -52,9 +51,6 @@ trait Signal
             case 'debug':
                 $this->logDebug($message, $param);
                 break;
-            case 'custom-debug':
-                $this->logCustomDebug($message, $param);
-                break;
             default:
                 $this->logInfo($message, $param);
         }
@@ -64,10 +60,10 @@ trait Signal
      * @param string $message
      * @param array  $param
      */
-    private function logEmergency($message = 'Success', array $param = []): void
+    private function logEmergency(string $message = null, array $param = []): void
     {
-        if ((Config::get('signal.log.activity')) && (Config::get('signal.log.emergency'))) {
-            Event::dispatch('signal.emergency', [['message' => $message]]);
+        if (Config::get('signal.log.activity') && Config::get('signal.log.emergency')) {
+            event('signal.emergency', [$message, $param]);
         }
     }
 
@@ -75,10 +71,10 @@ trait Signal
      * @param string $message
      * @param array  $param
      */
-    private function logAlert($message = 'Success', array $param = []): void
+    private function logAlert(string $message = null, array $param = []): void
     {
-        if ((Config::get('signal.log.activity')) && (Config::get('signal.log.alert'))) {
-            Event::dispatch('signal.alert', [['message' => $message]]);
+        if (Config::get('signal.log.activity') && Config::get('signal.log.alert')) {
+            event('signal.alert', [$message, $param]);
         }
     }
 
@@ -86,10 +82,10 @@ trait Signal
      * @param string $message
      * @param array  $param
      */
-    private function logCritical($message = 'Success', array $param = []): void
+    private function logCritical(string $message = null, array $param = []): void
     {
-        if ((Config::get('signal.log.activity')) && (Config::get('signal.log.critical'))) {
-            Event::dispatch('signal.critical', [['message' => $message]]);
+        if (Config::get('signal.log.activity') && Config::get('signal.log.critical')) {
+            event('signal.critical', [$message, $param]);
         }
     }
 
@@ -97,11 +93,10 @@ trait Signal
      * @param string $message
      * @param array  $param
      */
-    private function logError($message = 'Error', array $param = []): void
+    private function logError(string $message = null, array $param = []): void
     {
-        if ((Config::get('signal.log.activity')) && (Config::get('signal.log.error'))) {
-            Event::dispatch('signal.error', [['message' => $message,
-                                              'error'   => $param['error']]]); // $error instanceof \Exception
+        if (Config::get('signal.log.activity') && Config::get('signal.log.error')) {
+            event('signal.error', [$message, $param]); // ['error' => $error] $error instanceof \Exception
         }
     }
 
@@ -109,10 +104,10 @@ trait Signal
      * @param string $message
      * @param array  $param
      */
-    private function logWarning($message = 'Success', array $param = []): void
+    private function logWarning(string $message = null, array $param = []): void
     {
-        if ((Config::get('signal.log.activity')) && (Config::get('signal.log.warning'))) {
-            Event::dispatch('signal.warning', [['message' => $message]]);
+        if (Config::get('signal.log.activity') && Config::get('signal.log.warning')) {
+            event('signal.warning', [$message, $param]);
         }
     }
 
@@ -120,10 +115,10 @@ trait Signal
      * @param string $message
      * @param array  $param
      */
-    private function logNotice($message = 'Success', array $param = []): void
+    private function logNotice(string $message = null, array $param = []): void
     {
-        if ((Config::get('signal.log.activity')) && (Config::get('signal.log.notice'))) {
-            Event::dispatch('signal.notice', [['message' => $message]]);
+        if (Config::get('signal.log.activity') && Config::get('signal.log.notice')) {
+            event('signal.notice', [$message, $param]);
         }
     }
 
@@ -131,10 +126,10 @@ trait Signal
      * @param string $message
      * @param array  $param
      */
-    private function logInfo($message = 'Success', array $param = []): void
+    private function logInfo(string $message = null, array $param = []): void
     {
-        if ((Config::get('signal.log.activity')) && (Config::get('signal.log.info'))) {
-            Event::dispatch('signal.info', [['message' => $message]]);
+        if (Config::get('signal.log.activity') && Config::get('signal.log.info')) {
+            event('signal.info', [$message, $param]);
         }
     }
 
@@ -142,45 +137,10 @@ trait Signal
      * @param string $message
      * @param array  $param
      */
-    private function logDebug($message = 'Success', array $param = []): void
+    private function logDebug(string $message = null, array $param = []): void
     {
-        if ((Config::get('signal.log.activity')) && (Config::get('signal.log.debug'))) {
-            Event::dispatch('signal.debug', [['message' => $message]]);
-        }
-    }
-
-    /**
-     * @param string $message
-     * @param array  $param
-     */
-    private function logCustomDebug($message = 'Success', array $param = []): void
-    {
-        $table     = (isset($param['table'])) ? $param['table'] : 'N/A';
-        $condition = (isset($param['condition'])) ? $param['condition'] : 'N/A';
-        $construct = (isset($param['construct'])) ? $param['construct'] : '';
-        $message   = (isset($param['message'])) ? $param['message'] : $message;
-
-        if (is_array($message)) {
-            $this->logInfo('Values of string expected but array given.', $param);
-            $message = implode(", ", $message);
-        }
-        if ((isset($param['status'])) && (!$param['status'])) {
-            if ((Config::get('signal.log.activity')) && (Config::get('signal.log.error'))) {
-                Event::dispatch('signal.error', [['message' => $param['e']->getMessage()]]);
-            }
-        } else {
-            if ((Config::get('signal.log.activity')) && (Config::get('signal.log.debug'))) {
-                if (isset($param['construct'])) {
-                    $query      = $construct->toSql();
-                    $queryCount = $construct->count();
-
-                    Event::dispatch('signal.debug', [
-                        ['message' => 'Success get data from ' . $table . ' table, count records "' . $queryCount . '", with query : "' . $query . '"'],
-                    ]);
-                } else {
-                    Event::dispatch('signal.debug', [['message' => $message]]);
-                }
-            }
+        if (Config::get('signal.log.activity') && Config::get('signal.log.debug')) {
+            event('signal.debug', [$message, $param]);
         }
     }
 }
