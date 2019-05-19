@@ -89,7 +89,7 @@ class UserController extends Controller
         $param  = $this->getParam($this->type);
 
         try {
-            $response = $this->userService->profile($data, $option, $param);
+            $user = $this->userService->profile($data, $option, $param);
         } catch (\Exception $error) {
             # Provide $error instance of \Exception
             # Provide the uuid, upon empty, error uuid will be assigned automatically
@@ -98,7 +98,7 @@ class UserController extends Controller
             return $this->response($this->getErrorResponse($this->euuid, $error), 500);
         }
 
-        return $this->response($response, 200);
+        return $this->response($user, 200);
     }
 }
 ```
