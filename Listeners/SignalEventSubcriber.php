@@ -1,19 +1,26 @@
 <?php
 /**
+ * Copyright(c) 2019. All rights reserved.
+ * Last modified 5/19/19 3:17 PM
+ */
+
+/**
  * SignalEventSubcriber.php
  * Created by @anonymoussc on 6/3/2017 11:03 PM.
  */
 
 namespace App\Components\Signal\Listeners;
 
-use Illuminate\Support\Facades\{
-    Auth, Mail, Config, App
-};
-use App\Components\Signal\Entities\Signal;
-use Jenssegers\Agent\Agent;
-use Carbon\Carbon;
 use App\Components\Signal\Emails\SignalMailer;
+use App\Components\Signal\Entities\Signal;
 use App\Components\Signal\Shared\ErrorLog;
+use Carbon\Carbon;
+use Illuminate\Support\Facades\App;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Facades\Mail;
+use Jenssegers\Agent\Agent;
+use Webpatser\Uuid\Uuid;
 
 /**
  * Class SignalEventSubcriber
@@ -52,216 +59,192 @@ class SignalEventSubcriber
     }
 
     /**
-     * @param array  $log
-     * @param string $level
+     * @param string $message
      * @param array  $param
      *
      * @return bool
      */
-    public function onEmergency(array $log, $level = 'emergency', array $param = []): bool
+    public function onEmergency(string $message = '', array $param = []): bool
     {
+        $type = 'emergency';
+
         try {
-            $logData = self::getLogData($log, $level);
+            $logData = $this->getLogData($type, $message, $param);
 
             if (Signal::insert($logData)) {
-                self::sendMail($logData);
+                $this->sendMail($logData);
             }
         } catch (\Exception $e) {
-            self::errorLog($e);
+            $this->errorLog($e);
         }
 
         return true;
     }
 
     /**
-     * @param array  $log
-     * @param string $level
+     * @param string $message
      * @param array  $param
      *
      * @return bool
      */
-    public function onAlert(array $log, $level = 'alert', array $param = []): bool
+    public function onAlert(string $message = '', array $param = []): bool
     {
+        $type = 'alert';
+
         try {
-            $logData = self::getLogData($log, $level);
+            $logData = $this->getLogData($type, $message, $param);
 
             if (Signal::insert($logData)) {
-                self::sendMail($logData);
+                $this->sendMail($logData);
             }
         } catch (\Exception $e) {
-            self::errorLog($e);
+            $this->errorLog($e);
         }
 
         return true;
     }
 
     /**
-     * @param array  $log
-     * @param string $level
+     * @param string $message
      * @param array  $param
      *
      * @return bool
      */
-    public function onCritical(array $log, $level = 'critical', array $param = []): bool
+    public function onCritical(string $message = '', array $param = []): bool
     {
+        $type = 'critical';
+
         try {
-            $logData = self::getLogData($log, $level);
+            $logData = $this->getLogData($type, $message, $param);
 
             if (Signal::insert($logData)) {
-                self::sendMail($logData);
+                $this->sendMail($logData);
             }
         } catch (\Exception $e) {
-            self::errorLog($e);
+            $this->errorLog($e);
         }
 
         return true;
     }
 
     /**
-     * @param array  $log
-     * @param string $level
+     * @param string $message
      * @param array  $param
      *
      * @return bool
      */
-    public function onError(array $log, $level = 'error', array $param = []): bool
+    public function onError(string $message = '', array $param = []): bool
     {
+        $type = 'error';
+
         try {
-            $logData = self::getLogData($log, $level);
+            $logData = $this->getLogData($type, $message, $param);
 
             if (Signal::insert($logData)) {
 
-                if (isset($log['error'])) {
+                if (isset($param['error'])) {
                     $logData['errorLog'] = true;
                 }
 
-                self::sendMail($logData);
+                $this->sendMail($logData);
             }
         } catch (\Exception $e) {
-            self::errorLog($e);
+            $this->errorLog($e);
         }
 
         return true;
     }
 
     /**
-     * @param array  $log
-     * @param string $level
+     * @param string $message
      * @param array  $param
      *
      * @return bool
      */
-    public function onWarning(array $log, $level = 'warning', array $param = []): bool
+    public function onWarning(string $message = '', array $param = []): bool
     {
+        $type = 'warning';
+
         try {
-            $logData = self::getLogData($log, $level);
+            $logData = $this->getLogData($type, $message, $param);
 
             if (Signal::insert($logData)) {
-                self::sendMail($logData);
+                $this->sendMail($logData);
             }
         } catch (\Exception $e) {
-            self::errorLog($e);
+            $this->errorLog($e);
         }
 
         return true;
     }
 
     /**
-     * @param array  $log
-     * @param string $level
+     * @param string $message
      * @param array  $param
      *
      * @return bool
      */
-    public function onNotice(array $log, $level = 'notice', array $param = []): bool
+    public function onNotice(string $message = '', array $param = []): bool
     {
+        $type = 'notice';
+
         try {
-            $logData = self::getLogData($log, $level);
+            $logData = $this->getLogData($type, $message, $param);
 
             if (Signal::insert($logData)) {
-                self::sendMail($logData);
+                $this->sendMail($logData);
             }
         } catch (\Exception $e) {
-            self::errorLog($e);
+            $this->errorLog($e);
         }
 
         return true;
     }
 
     /**
-     * @param array  $log
-     * @param string $level
+     * @param string $message
      * @param array  $param
      *
      * @return bool
      */
-    public function onInfo(array $log, $level = 'info', array $param = []): bool
+    public function onInfo(string $message = '', array $param = []): bool
     {
+        $type = 'info';
+
         try {
-            $logData = self::getLogData($log, $level);
+            $logData = $this->getLogData($type, $message, $param);
 
             if (Signal::insert($logData)) {
-                self::sendMail($logData);
+                $this->sendMail($logData);
             }
         } catch (\Exception $e) {
-            self::errorLog($e);
+            $this->errorLog($e);
         }
 
         return true;
     }
 
     /**
-     * @param array  $log
-     * @param string $level
+     * @param string $message
      * @param array  $param
      *
      * @return bool
      */
-    public function onDebug(array $log, $level = 'debug', array $param = []): bool
+    public function onDebug(string $message = '', array $param = []): bool
     {
+        $type = 'debug';
+
         try {
-            $logData = self::getLogData($log, $level);
+            $logData = $this->getLogData($type, $message, $param);
 
             if (Signal::insert($logData)) {
-                self::sendMail($logData);
+                $this->sendMail($logData);
             }
         } catch (\Exception $e) {
-            self::errorLog($e);
+            $this->errorLog($e);
         }
 
         return true;
-    }
-
-    /**
-     * @param       $email
-     * @param       $subject
-     * @param       $view
-     * @param array $data
-     */
-    private function sendTo($email, $subject, $view, $data = []): void
-    {
-        $sender = $this->gatherSenderAddress();
-        Mail::queue($view, $data, function ($message) use ($email, $subject, $sender) {
-            $message->to($email)
-                ->from($sender['address'], $sender['name'])
-                ->subject($subject);
-        });
-    }
-
-    /**
-     * @return array|mixed
-     */
-    private function gatherSenderAddress()
-    {
-        $sender = Config::get('mail.from', []);
-        if (!array_key_exists('address', $sender) || is_null($sender['address'])) {
-            return ['address' => 'noreply@example.com', 'name' => ''];
-        }
-        if (is_null($sender['name'])) {
-            $sender['name'] = '';
-        }
-
-        return $sender;
     }
 
     /**
@@ -271,13 +254,7 @@ class SignalEventSubcriber
      */
     private function toString($language): string
     {
-        if (is_array($language)) {
-            $agent = json_encode($language);
-        } else {
-            $agent = $language;
-        }
-
-        return $agent;
+        return is_array($language) ? json_encode($language) : $language;
     }
 
     /**
@@ -293,31 +270,31 @@ class SignalEventSubcriber
 
                 Mail::to(Config::get('signal.email.sentTo'))->send(new SignalMailer($data));
             } catch (\Exception $e) {
-                self::errorLog($e);
+                $this->errorLog($e);
             }
         }
     }
 
     /**
-     * @param array  $log
-     * @param string $level
+     * @param        $type
+     * @param string $message
      * @param array  $param
      *
      * @return array
      */
-    private function getLogData(array $log = [], $level = '', array $param = []): array
+    private function getLogData($type, string $message = '', array $param = []): array
     {
-        $request       = (isset($log['request'])) ? $log['request'] : App::get('request');
-        $userId        = (null !== Auth::id()) ? Auth::id() : 0;
+        $request       = $param['request'] ?? App::get('request');
+        $userId        = Auth::id() ?? 0;
         $agentLanguage = $this->toString($this->agent->languages());
 
         $logData = [
-            'level'                   => $level,
-            'message'                 => $log['message'],
-            'request_full_url'        => $request->fullUrl() ? $request->fullUrl() : 'undefined',
-            'request_url'             => $request->url() ? $request->url() : 'undefined',
-            'request_uri'             => $request->path() ? $request->path() : 'undefined',
-            'request_method'          => (App::get('request')->header('x-http-method-override')) ? App::get('request')->header('x-http-method-override') : $request->method(),
+            'level'                   => $type,
+            'message'                 => $message,
+            'request_full_url'        => $request->fullUrl() ?: 'undefined',
+            'request_url'             => $request->url() ?: 'undefined',
+            'request_uri'             => $request->path() ?: 'undefined',
+            'request_method'          => App::get('request')->header('x-http-method-override') ?: $request->method(),
             'devices'                 => $this->agent->device(),
             'os'                      => $this->agent->platform(),
             'os_version'              => $this->agent->version($this->agent->platform()),
@@ -330,13 +307,15 @@ class SignalEventSubcriber
             'created_at'              => Carbon::now(),
         ];
 
-        if (isset($log['error'])) {
-            if ($log['error'] instanceof \Exception) {
-                $logData['error_get_message'] = ($log['error']->getMessage()) ? $log['error']->getMessage() : null;
-                $logData['error_get_code']    = ($log['error']->getCode()) ? $log['error']->getCode() : null;
-                $logData['error_get_file']    = ($log['error']->getFile()) ? $log['error']->getFile() : null;
-                $logData['error_get_line']    = ($log['error']->getLine()) ? $log['error']->getLine() : null;
-                $logData['error_get_trace']   = ($log['error']->getTraceAsString()) ? $log['error']->getTraceAsString() : null;
+        if (isset($param['error'])) {
+            $error = $param['error'];
+            if ($error instanceof \Exception) {
+                $logData['error_uuid']        = $param['uuid'] ?? (string)Uuid::generate(4);
+                $logData['error_get_message'] = $error->getMessage() ?: null;
+                $logData['error_get_code']    = $error->getCode() ?: null;
+                $logData['error_get_file']    = $error->getFile() ?: null;
+                $logData['error_get_line']    = $error->getLine() ?: null;
+                $logData['error_get_trace']   = $error->getTraceAsString() ?: null;
             }
         }
 
