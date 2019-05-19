@@ -21,6 +21,9 @@
     @isset($errorLog)
         @if ($errorLog === true)
             <p>StackTrace : </p>
+            @isset($error_uuid)
+                <p>Error Id : {{ $error_uuid }}</p>
+            @endisset
             @isset($error_get_message)
                 <p>Message : {{ $error_get_message }}</p>
             @endisset
