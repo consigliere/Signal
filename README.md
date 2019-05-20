@@ -105,9 +105,9 @@ class UserController extends Controller
 
 ### Signal Api Response error reporting example
 
-[Example error response in production environment](https://github.com/consigliere/Scaffold#example-error-response-in-production-environment)
+- [Example error response in production environment](https://github.com/consigliere/Scaffold#example-error-response-in-production-environment)
 
-[Example error response in not production environment](https://github.com/consigliere/Scaffold#example-error-response-in-not-production-environment)
+- [Example error response in not production environment](https://github.com/consigliere/Scaffold#example-error-response-in-not-production-environment)
 
 ### Sent log data into multiple email recipient
 
