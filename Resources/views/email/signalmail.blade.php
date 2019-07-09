@@ -25,6 +25,11 @@
             @isset($error_uuid)
                 <p>Error Id : {{ $error_uuid }}</p>
             @endisset
+
+            @isset($error_get_status_code)
+                <p>Status Code : {{ $error_get_status_code }}</p>
+            @endisset
+
             @isset($error_get_message)
                 <p>Message : {{ $error_get_message }}</p>
             @endisset
