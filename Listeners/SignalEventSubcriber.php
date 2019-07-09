@@ -1,12 +1,12 @@
 <?php
 /**
- * Copyright(c) 2019. All rights reserved.
- * Last modified 5/20/19 12:04 AM
+ * SignalEventSubcriber.php
+ * Created by @anonymoussc on 6/3/2017 11:03 PM.
  */
 
 /**
- * SignalEventSubcriber.php
- * Created by @anonymoussc on 6/3/2017 11:03 PM.
+ * Copyright(c) 2019. All rights reserved.
+ * Last modified 6/13/19 10:34 PM
  */
 
 namespace App\Components\Signal\Listeners;
@@ -316,12 +316,19 @@ class SignalEventSubcriber
         if (isset($param['error'])) {
             $error = $param['error'];
             if ($error instanceof \Exception) {
-                $logData['error_uuid']        = $param['uuid'] ?? (string)Uuid::generate(4);
-                $logData['error_get_message'] = $error->getMessage() ?: null;
-                $logData['error_get_code']    = $error->getCode() ?: null;
-                $logData['error_get_file']    = $error->getFile() ?: null;
-                $logData['error_get_line']    = $error->getLine() ?: null;
-                $logData['error_get_trace']   = $error->getTraceAsString() ?: null;
+                $statusCode = 500;
+
+                if (method_exists($error, 'getStatusCode')) {
+                    $statusCode = $error->getStatusCode();
+                }
+
+                $logData['error_uuid']            = $param['uuid'] ?? (string)Uuid::generate(4);
+                $logData['error_get_status_code'] = $param['statusCode'] ?? $statusCode;
+                $logData['error_get_message']     = $error->getMessage() ?: null;
+                $logData['error_get_code']        = $error->getCode() ?: null;
+                $logData['error_get_file']        = $error->getFile() ?: null;
+                $logData['error_get_line']        = $error->getLine() ?: null;
+                $logData['error_get_trace']       = $error->getTraceAsString() ?: null;
             }
         }
 
